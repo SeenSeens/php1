@@ -4,9 +4,7 @@ class TinhNamAmLich {
     public $__namamlich;
     public $__thiencan;
     public $__diachi;
-    /**
-     * Tính thiên can
-     */
+
     public function ThienCan() {
         switch ($this->__namduonglich % 10) {
             case 0:

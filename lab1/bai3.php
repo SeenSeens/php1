@@ -6,9 +6,9 @@ $tinhtiendien = new tinh_tien_dien();
 
 if(isset($_POST['tinhtiendien']) && isset($_POST['tenchuho']) && isset($_POST['chisocu']) && isset($_POST['chisomoi']) && isset($_POST['dongia'])) {
     $tenchuho = $_POST['tenchuho'];
-    $chisocu = intval($_POST['chisocu']);
-    $chisomoi = intval($_POST['chisomoi']);
-    $dongia = intval($_POST['dongia']);
+    $chisocu = floatval($_POST['chisocu']);
+    $chisomoi = floatval($_POST['chisomoi']);
+    $dongia = floatval($_POST['dongia']);
 
     $tinhtiendien->setTenChuHo($tenchuho);
     $tinhtiendien->setChiSoCu($chisocu);

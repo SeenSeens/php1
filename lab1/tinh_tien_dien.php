@@ -2,7 +2,7 @@
 class tinh_tien_dien {
     private $tenchuho;
     private $chisocu;
-    private $chisomo;
+    private $chisomoi;
     private $dongia;
 
     public function setTenChuHo($tenchuho) {
@@ -37,10 +37,9 @@ class tinh_tien_dien {
         return $this->dongia;
     }
     public function TinhTien() {
-
         return ( $this->getChiSoMoi() - $this->getChiSoCu() ) * $this->getDonGia();
     }
-    public function Reset() {
-        $this->setTenChuHo("");
-    }
+//    public function Reset() {
+//        $this->setTenChuHo("");
+//    }
 }

@@ -6,8 +6,14 @@ class KetQuaHocTap {
     public $ketqua;
     public $xeploai;
 
+    public function CheckDiem() {
+        if($this->diemhk1 > 0 && $this->diemhk1 <= 10 && $this->diemhk2 > 0 && $this->diemhk2 <= 10) return true;
+        else return  false;
+    }
     function TinhDiemTrungBinh() {
-        $this->diemtrungbinh = ($this->diemhk1 + ($this->diemhk2 * 2)) / 3;
+        if(CheckDiem()) {
+            $this->diemtrungbinh = ($this->diemhk1 + ($this->diemhk2 * 2)) / 3;
+        }
     }
 
     function XemKetQua() {
@@ -37,8 +43,8 @@ $ketquahoctap = new KetQuaHocTap();
 
 if (isset($_POST['xemketqua']) && isset($_POST['diemhk1']) && isset($_POST['diemhk2'])) {
 
-    $ketquahoctap->diemhk1 = intval($_POST['diemhk1']);
-    $ketquahoctap->diemhk2 = intval($_POST['diemhk2']);
+    $ketquahoctap->diemhk1 = floatval($_POST['diemhk1']);
+    $ketquahoctap->diemhk2 = floatval($_POST['diemhk2']);
     $ketquahoctap->TinhDiemTrungBinh();
     $ketquahoctap->XemKetQua();
     $ketquahoctap->XepLoai();
@@ -67,7 +73,7 @@ if (isset($_POST['xemketqua']) && isset($_POST['diemhk1']) && isset($_POST['diem
                         <tbody>
                             <tr>
                                 <td><label>Điểm HK 1</label></td>
-                                <td><input type="text" name="diemhk1" class="form-control" value="<?php if(isset($ketquahoctap->diemhk1)) echo$ketquahoctap->diemhk1; ?>"></td>
+                                <td><input type="text" name="diemhk1" id="diemhk1" class="form-control" value="<?php if(isset($ketquahoctap->diemhk1)) echo$ketquahoctap->diemhk1; ?>"></td>
                             </tr>
                             <tr>
                                 <td><label>Điểm HK 2</label></td>

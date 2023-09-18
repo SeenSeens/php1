@@ -8,16 +8,13 @@ class TimThuTrongTuan {
     public $__thu;
 
     // Kiểm tra hợp lệ của ngày, tháng, năm nhập vào
-    public function CheckValidation() {
-        if ($this->__ngay > 0 && $this->__ngay <= 31 && $this->__thang >= 1 && $this->__thang <= 12 && $this->__nam >= 1900 && $this->__nam <= 2099) {
-            return true;
-        } else {
-            return false;
-        }
+    public function CheckDate() {
+        if(checkdate($this->__thang, $this->__ngay, $this->__nam)) return true;
+        return false;
     }
 
     public function TimThu() {
-        if ($this->CheckValidation()) {
+        if ($this->CheckDate()) {
             $this->__thu = date('l', mktime(0, 0, 0, $this->__thang, $this->__ngay, $this->__nam));
             $thu = [
                 'Monday' => 'Thứ Hai',
@@ -39,9 +36,9 @@ class TimThuTrongTuan {
 $timthutrongtuan = new TimThuTrongTuan();
 
 if (isset($_POST['timthutrongtuan']) && isset($_POST['ngay']) && isset($_POST['thang']) && isset($_POST['nam'])) {
-    $timthutrongtuan->__ngay = intval($_POST['ngay']);
-    $timthutrongtuan->__thang = intval($_POST['thang']);
-    $timthutrongtuan->__nam = intval($_POST['nam']);
+    $timthutrongtuan->__ngay = intval( trim($_POST['ngay']) );
+    $timthutrongtuan->__thang = intval( trim($_POST['thang']) );
+    $timthutrongtuan->__nam = intval( trim($_POST['nam']) );
 
     $timthutrongtuan->TimThu();
 }
@@ -70,13 +67,13 @@ if (isset($_POST['timthutrongtuan']) && isset($_POST['ngay']) && isset($_POST['t
                                 <td>
                                     <label class="form-label">Ngày / tháng / năm</label>
                                 </td>
-                                <td>
+                                <td width="100">
                                     <input type="number" class="form-control" name="ngay" value="<?= isset($timthutrongtuan->__ngay) ? $timthutrongtuan->__ngay : ''; ?>">
                                 </td>
-                                <td>
+                                <td width="100">
                                     <input type="number" class="form-control" name="thang" value="<?= isset($timthutrongtuan->__thang) ? $timthutrongtuan->__thang : ''; ?>">
                                 </td>
-                                <td>
+                                <td width="100">
                                     <input type="number" class="form-control" name="nam" value="<?= isset($timthutrongtuan->__nam) ? $timthutrongtuan->__nam : ''; ?>">
                                 </td>
                                 <td>
