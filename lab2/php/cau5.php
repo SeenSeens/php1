@@ -19,4 +19,12 @@ class TimNamNhuan {
         return $this->__ArrayYear;
     }
 }
+$timnamnhuan = new TimNamNhuan();
+/**
+ * Khi submit thì hành động được thực hiện
+ */
+if (isset($_POST['timnamnhuan'])) {
+    $timnamnhuan->__Year = intval(trim($_POST['nam']));
+    $timnamnhuan->InNamNhuan();
+}
 ?>

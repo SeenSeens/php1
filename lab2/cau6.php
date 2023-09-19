@@ -1,20 +1,4 @@
-<?php
-class GioHoa {
-    public $__Hoa;
-    public $__ArrayHoa = [];
-    public function MangGioHoa() {
-        foreach ($this->__ArrayHoa as $arrHoa) {
-            $kq = strcasecmp($arrHoa, $this->__Hoa);
-            if($kq === 0) $this->__ArrayHoa = array_push($this->__ArrayHoa, $this->__Hoa);
-        }
-    }
-}
-$giohoa = new GioHoa();
-if(isset($_POST['themvaogio'])) :
-    $giohoa->__Hoa = trim($_POST['hoa']);
-    $giohoa->MangGioHoa();
-endif;
-?>
+<?php require_once "./php/cau6.php"; ?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -22,7 +6,7 @@ endif;
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Câu 5</title>
+    <title>Câu 6</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
 </head>
 <body>
@@ -33,6 +17,10 @@ endif;
                 <div class="card border-info">
                     <div class="card-header text-uppercase text-center fs-3">Mua hoa</div>
                     <div class="card-body">
+                        <!-- Hiển thị thông báo -->
+                        <?php if (!empty($giohoa->__Notify)) : ?>
+                            <div class="alert alert-danger"><?= $giohoa->__Notify ?></div>
+                        <?php endif; ?>
                         <div class="row mb-1">
                             <div class="col-auto fs-5"> Loại hoa bạn chọn </div>
                             <div class="col-auto">
@@ -44,7 +32,12 @@ endif;
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                Giỏ hoa bạn có
+                                <!-- Hiển thị danh sách sản phẩm trong giỏ hàng -->
+                                <?php
+                                if (!empty($_SESSION['gio_hoa'])) :
+                                    echo implode(" ", $_SESSION['gio_hoa']);
+                                endif;
+                                ?>
                             </div>
                         </div>
                     </div>

@@ -1,15 +1,4 @@
-<?php
-require_once "./php/cau5.php";
-
-$timnamnhuan = new TimNamNhuan();
-/**
- * Khi submit thì hành động được thực hiện
- */
-if (isset($_POST['timnamnhuan'])) {
-    $timnamnhuan->__Year = intval(trim($_POST['nam']));
-    $timnamnhuan->InNamNhuan();
-}
-?>
+<?php require_once "./php/cau5.php"; ?>
 <!doctype html>
 <html lang="en">
 <head>
