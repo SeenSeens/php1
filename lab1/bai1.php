@@ -1,9 +1,4 @@
-<?php
-$name = '';
-if( isset($_POST['chao']) && isset($_POST['name'])) :
-    $name = $_POST['name'];
-endif;
-?>
+<?php require_once "./php/bai1.php"; ?>
 <!doctype html>
 <html lang="en">
 <head>

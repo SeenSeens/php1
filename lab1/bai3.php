@@ -1,24 +1,4 @@
-<?php
-require_once "tinh_tien_dien.php";
-
-$tinhtiendien = new tinh_tien_dien();
-
-
-if(isset($_POST['tinhtiendien']) && isset($_POST['tenchuho']) && isset($_POST['chisocu']) && isset($_POST['chisomoi']) && isset($_POST['dongia'])) {
-    $tenchuho = $_POST['tenchuho'];
-    $chisocu = floatval($_POST['chisocu']);
-    $chisomoi = floatval($_POST['chisomoi']);
-    $dongia = floatval($_POST['dongia']);
-
-    $tinhtiendien->setTenChuHo($tenchuho);
-    $tinhtiendien->setChiSoCu($chisocu);
-    $tinhtiendien->setChiSoMoi($chisomoi);
-    $tinhtiendien->setDonGia($dongia);
-
-    $tinhtiendien->TinhTien();
-}
-
-?>
+<?php require_once "./php/bai3.php"; ?>
 <!doctype html>
 <html lang="en">
 <head>
