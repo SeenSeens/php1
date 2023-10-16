@@ -50,6 +50,7 @@
                                     <input type="text" class="form-control" value="<?= isset($soanhchuoi->__sosanh) ? $soanhchuoi->__sosanh : ''; ?>" readonly>
                                 </td>
                             </tr>
+
                         </tbody>
                     </table>
                 </form>

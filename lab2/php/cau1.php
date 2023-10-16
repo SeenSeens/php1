@@ -9,6 +9,7 @@ class SoSanhChuoi {
         if($kq > 0) return $this->__sosanh = "Chuỗi thứ nhất dài hơn chuỗi thứ 2";
         if($kq < 0) return $this->__sosanh = "Chuỗi thứ nhất ngắn hơn chuỗi thứ 2";
     }
+
 }
 $soanhchuoi = new SoSanhChuoi();
 
