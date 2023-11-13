@@ -1,8 +1,8 @@
 <?php
 class De1 {
-    private array $__data = [];
+    public array $__data = [];
     private const FILENAME = "de1.txt";
-    private array $__Phong = [
+    public array $__Phong = [
         "standard" => [
             "name" => "Standard",
             "price" => 2500000,
@@ -24,10 +24,10 @@ class De1 {
             "image" => "https://chefjob.vn/wp-content/uploads/2020/07/tieng-anh-loai-phong-khach-san.jpg"
         ],
     ];
-    private $__selectedIdLoaiPhong;
-    private $__ngayNhanPhong;
-    private $__ngayTraPhong;
-    private int $__soLuongPhong;
+    public $__selectedIdLoaiPhong;
+    public $__ngayNhanPhong;
+    public $__ngayTraPhong;
+    public int $__soLuongPhong;
     function LoadLoaiPhong() {
         foreach ($this->__Phong as $key => $value) :
             echo '<option value="'. $key .'">' . $value['name'] . '</option>';
@@ -59,18 +59,21 @@ class De1 {
                     $dataParts = explode('|', $line);
                     if(isset($dataParts) && count($dataParts) == 8) {
                         echo '<tr>';
-                        foreach ($dataParts as $key => $value) :
-                            if ($key === count($dataParts) - 1) { // Kiểm tra cột hình ảnh
-                                echo "<td class='col-2'><img src='$value' alt='Hình ảnh' class='img-thumbnail'></td>";
-                            } else {
-                                echo "<td class='col'>$value</td>";
-                            }
-                        endforeach;
+                        $this->PrintTableColumns($dataParts);
                         echo '</tr>';
                     }
                 endforeach;
             endif;
         endif;
+    }
+    private function PrintTableColumns($dataParts) {
+        foreach ($dataParts as $key => $value) :
+            if ($key === count($dataParts) - 1) { // Kiểm tra cột hình ảnh
+                echo "<td class='col-2'><img src='$value' alt='Hình ảnh' class='img-thumbnail'></td>";
+            } else {
+                echo "<td class='col'>$value</td>";
+            }
+        endforeach;
     }
     function WriteFile() {
         $current = file_get_contents(self::FILENAME);
@@ -78,27 +81,36 @@ class De1 {
         $current .= implode(' | ', $this->__data) . "\n";
         file_put_contents(self::FILENAME, $current);
     }
-    function HandleSubmitForm () {
-        if(isset($_POST['datphong'])) {
-            $hoVaTen = trim(htmlspecialchars($_POST['hovaten']));
-            $diaChi = trim(htmlspecialchars($_POST['diachi']));
-            $this->__selectedIdLoaiPhong = trim(htmlspecialchars($_POST['loaiphong']));
-            $this->__ngayNhanPhong = trim(htmlspecialchars($_POST['ngaynhanphong']));
-            $this->__ngayTraPhong =  trim(htmlspecialchars($_POST['ngaytraphong']));
-            $this->__soLuongPhong = trim(intval($_POST['soluongphong']));
-            // Đưa các thông tin trên vào mảng
-            array_push($this->__data, $hoVaTen, $diaChi, $this->__Phong[$this->__selectedIdLoaiPhong]['name'], $this->__soLuongPhong, $this->SoNgayO(), $this->__Phong[$this->__selectedIdLoaiPhong]['price'], $this->TinhTongTien(), $this->__Phong[$this->__selectedIdLoaiPhong]['image']);
-            $this->WriteFile();
-        }
-    }
+
 
 }
-$de1 = new De1();
-$de1->HandleSubmitForm();
 
+function HandleSubmitForm () {
+    global $de1;
+    if(isset($_POST['datphong'])) {
+        $de1->__selectedIdLoaiPhong = trim(htmlspecialchars($_POST['loaiphong']));
+        $de1->__ngayNhanPhong = trim(htmlspecialchars($_POST['ngaynhanphong']));
+        $de1->__ngayTraPhong =  trim(htmlspecialchars($_POST['ngaytraphong']));
+        $de1->__soLuongPhong = trim(intval($_POST['soluongphong']));
+        // Đưa các thông tin trên vào mảng
+        array_push($de1->__data,
+            trim(htmlspecialchars($_POST['hovaten'])),
+            trim(htmlspecialchars($_POST['diachi'])),
+            $de1->__Phong[$de1->__selectedIdLoaiPhong]['name'],
+            $de1->__soLuongPhong, $de1->SoNgayO(),
+            $de1->__Phong[$de1->__selectedIdLoaiPhong]['price'],
+            $de1->TinhTongTien(),
+            $de1->__Phong[$de1->__selectedIdLoaiPhong]['image']
+        );
+        $de1->WriteFile();
+    }
+}
+$de1 = new De1();
+HandleSubmitForm();
 ?>
+
 <!doctype html>
-<html lang="en" ng-app="myApp">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -107,11 +119,11 @@ $de1->HandleSubmitForm();
     <title>Document</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
 </head>
-<body ng-controller="myCtrl">
-<main class="container">
+<body ng-app="myApp">
+<main class="container" ng-controller="myCtrl">
  <section class="row justify-content-center">
      <div class="col-6">
-         <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post" autocomplete="off" enctype="multipart/form-data" class="row row-cols-2 justify-content-center g-3">
+         <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="post" autocomplete="on" enctype="multipart/form-data" class="row row-cols-2 justify-content-center g-3">
              <div class="col-12">
                  <div class="text-uppercase text-center bg-primary p-3 text-white">Đặt phòng khách sạn</div>
              </div>
@@ -131,7 +143,7 @@ $de1->HandleSubmitForm();
                  <label>Loại phòng</label>
              </div>
              <div class="col">
-                 <select name="loaiphong" class="form-control" ng-model="selectedRoomType" ng-change="updateImage()" required>
+                 <select name="loaiphong" class="form-control" required>
                      <?php $de1->LoadLoaiPhong(); ?>
                  </select>
              </div>
@@ -175,7 +187,7 @@ $de1->HandleSubmitForm();
                  <label>Hình ảnh phòng</label>
              </div>
              <div class="col-12">
-                 <?= $de1->LoadImageLoaiPhong(); ?>
+                 <?= $de1->LoadImageLoaiPhong() ?>
              </div>
              <div class="col-12">
                  <button type="submit" class="btn btn-primary" name="datphong">Đặt phòng</button>
@@ -201,19 +213,6 @@ $de1->HandleSubmitForm();
     const app = angular.module('myApp', []);
     app.controller('myCtrl', function ($scope) {
         $scope.TableColumnsThead = ['Tên khách hàng', 'Địa chỉ', 'Loại phòng', 'Số lượng', 'Số ngày ở','Đơn giá', 'Tổng tiền', 'Hình ảnh'];
-        $scope.selectedRoomType = ''; // Biến để lưu trữ loại phòng được chọn
-        // Hàm để cập nhật ảnh khi loại phòng thay đổi
-        $scope.updateImage = function () {
-            // Lấy loại phòng được chọn và cập nhật ảnh
-            let selectedRoomType = $scope.selectedRoomType;
-            let imageElement = document.getElementById('roomImage');
-            if (selectedRoomType && $scope.__Phong[selectedRoomType]) {
-                imageElement.src = $scope.__Phong[selectedRoomType].image;
-            } else {
-                // Thiết lập ảnh mặc định hoặc ẩn ảnh nếu cần
-                imageElement.src = ''; // Đặt thành chuỗi trống hoặc cung cấp URL ảnh mặc định
-            }
-        }
     })
 </script>
 </body>
