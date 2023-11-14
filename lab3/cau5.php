@@ -48,7 +48,8 @@ abstract class dang_ky_tour_dl {
     protected $__lienHeDiaChi;
     protected $__soDienThoai;
     protected array $__yeuCau = [];
-
+    protected array $__data = [];
+    protected array $__cookies;
     public function setNgayKhoiHanh($_ngayKhoiHanh): void {
         $this->__ngayKhoiHanh = $_ngayKhoiHanh;
     }
@@ -120,7 +121,7 @@ class cau5 extends dang_ky_tour_dl {
     }
     function ShowPhuongTienDiChuyen() {
         foreach ($this->__tenPhuongTien as $key => $value) :
-            echo '<option value="' . $key . '" id="key" name="ádáđâsd">' . $value. '</option>';
+            echo '<option value="' . $key . '">' . $value. '</option>';
         endforeach;
     }
 
@@ -172,12 +173,7 @@ class cau5 extends dang_ky_tour_dl {
             !empty($this->__soDienThoai) ||
             !empty($this->__yeuCau[$this->DanhSachCacYeuCau()])
         ) :
-            foreach ($this->__tenTour as $region => $tours) :
-                if (array_key_exists($this->__selectedTourId, $tours)) :
-                    $this->__selectedRegion = $region;
-                    break;
-                endif;
-            endforeach;
+            $this->LayRegion();
         ?>
                 <p>Khách hàng đã đặt Tour: <?= $this->__tenTour[$this->__selectedRegion][$this->__selectedTourId]; ?></p>
                 <p>Ngày khởi hành : <?= $this->__ngayKhoiHanh; ?></p>
@@ -196,16 +192,49 @@ class cau5 extends dang_ky_tour_dl {
         <?php
         endif;
     }
-
+    function LayRegion() {
+        foreach ($this->__tenTour as $region => $tours) :
+            if (array_key_exists($this->__selectedTourId, $tours)) :
+                $this->__selectedRegion = $region;
+                break;
+            endif;
+        endforeach;
+    }
+    function LuuDuLieuVaoMang() {
+        $this->LayRegion();
+        array_push($this->__data, $this->getTenKhachHang(), $this->getLienHeDiaChi(), $this->getSoDienThoai(), $this->__tenTour[$this->__selectedRegion][$this->getSelectedTourId()], $this->getSoLuong(), $this->TongTien());
+    }
+    function DuaDuLieuMangVaoCookie() {
+        $this->LuuDuLieuVaoMang();
+        // Mã hóa cookie dưới dạng chuỗi
+        $cookies_serialized = serialize($this->__data);
+        // Đặt cookie
+        setcookie("kh", $cookies_serialized, time() + (86400 * 30)); // 30 ngày
+        // Truy xuất cookie
+        $this->__cookies = isset($_COOKIE["kh"]) ? unserialize($_COOKIE["kh"]) : [];
+        // In giá trị cookie
+    }
+    function HienThiCookieRaTable() {
+        $cookies = $_COOKIE;
+        var_dump($cookies);
+        foreach ($cookies as $key => $value) {
+            echo "<tr>";
+            echo "<td>{$value}</td>";
+            echo "</tr>";
+        }
+    }
     function XuLy(): void {
-        $this->setSelectedTourId( !empty($_POST['tour']) ? $_POST['tour'] : '' );
-        $this->setNgayKhoiHanh( !empty($_POST['ngaykhoihanh']) ? $_POST['ngaykhoihanh'] : '' );
-        $this->setSelectedPhuongTien( !empty($_POST['phuongtien']) ? $_POST['phuongtien'] : '' );
-        $this->setSoLuong( !empty($_POST['soluongdangky']) ? intval($_POST['soluongdangky']) : 0 );
-        $this->setTenKhachHang( !empty($_POST['tenkhachhang']) ? $_POST['tenkhachhang'] : '' );
-        $this->setLienHeDiaChi( !empty($_POST['lienhediachi']) ? $_POST['lienhediachi'] : '' );
-        $this->setSoDienThoai( !empty($_POST['sodienthoai']) ? $_POST['sodienthoai'] : '' );
-        $this->setYeuCau( [ !empty($_POST['yeucau']) ? $_POST['yeucau'] : '' ] );
+        if(isset($_POST['dangky'])) :
+            $this->setSelectedTourId( !empty($_POST['tour']) ? $_POST['tour'] : '' );
+            $this->setNgayKhoiHanh( !empty($_POST['ngaykhoihanh']) ? $_POST['ngaykhoihanh'] : '' );
+            $this->setSelectedPhuongTien( !empty($_POST['phuongtien']) ? $_POST['phuongtien'] : '' );
+            $this->setSoLuong( !empty($_POST['soluongdangky']) ? intval($_POST['soluongdangky']) : 0 );
+            $this->setTenKhachHang( !empty($_POST['tenkhachhang']) ? $_POST['tenkhachhang'] : '' );
+            $this->setLienHeDiaChi( !empty($_POST['lienhediachi']) ? $_POST['lienhediachi'] : '' );
+            $this->setSoDienThoai( !empty($_POST['sodienthoai']) ? $_POST['sodienthoai'] : '' );
+            $this->setYeuCau( [ !empty($_POST['yeucau']) ? $_POST['yeucau'] : '' ] );
+            $this->DuaDuLieuMangVaoCookie();
+        endif;
     }
 }
 $cau5 = new cau5();
@@ -222,8 +251,8 @@ $cau5->XuLy();
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <div class="row row-cols-2 justify-content-center">
+    <main class="container">
+        <section class="row row-cols-2 justify-content-center">
             <div class="col">
                 <div class="card">
                     <div class="card-header text-center text-white text-uppercase bg-primary-subtle fs-5">Đăng ký tour du lịch</div>
@@ -302,8 +331,50 @@ $cau5->XuLy();
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+        </section>
+        <section class="row row-cols-1 mt-3 g-3">
+            <div class="col text-center">
+                <label class="text-center">Table đầu tiên là session</label>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Tên khách hàng</th>
+                            <th>Địa chỉ</th>
+                            <th>Số điện thoại</th>
+                            <th>Tour</th>
+                            <th>Giá</th>
+                            <th>Số khách</th>
+                            <th>Thành tiền</th>
+                            <th>Hình</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+            <div class="col text-center">
+                <label class="text-center">Table thứ hai là cookie</label>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Tên khách hàng</th>
+                        <th>Địa chỉ</th>
+                        <th>Số điện thoại</th>
+                        <th>Tour</th>
+                        <th>Giá</th>
+                        <th>Số khách</th>
+                        <th>Thành tiền</th>
+                        <th>Hình</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?= $cau5->HienThiCookieRaTable(); ?>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
     <script>
         document.getElementById('dang_ky_tour_dl').addEventListener("submit", (event) => {
             const inputSoLuongDangKy = document.getElementById("soluongdangky").value;

@@ -1,7 +1,7 @@
 <?php
 session_start();
 class TourDuLich {
-    private array $__tenTour = [
+    public array $__tenTour = [
         "Miền Bắc" => [
             "hanoi-halong-sapa" => "Hà Nội - Hạ Long - Sapa",
             "hanoi-haiphong" => "Hà Nội - Hải Phòng",
@@ -18,7 +18,7 @@ class TourDuLich {
             "tphcm-mytho" => "TP.HCM - Mỹ Thơ"
         ]
     ];
-    private array $__giaTour = [
+    public array $__giaTour = [
         "hanoi-halong-sapa" => 6000000,
         "hanoi-haiphong" => 5500000,
         "hanoi-dienbien" => 5500000,
@@ -29,50 +29,14 @@ class TourDuLich {
         "tphcm-cantho-camau" => 4500000,
         "tphcm-mytho" => 3000000
     ];
-    private $__selectedTourId;
-    private $__ngayKhoiHanh;
+    public $__selectedTourId;
+    public $__selectedRegion;
+    /*private $__ngayKhoiHanh;
     private $__soLuongDangKy;
     private $__tenKhachHang;
     private $__diaChiLienHe;
-    private $__soDienThoai;
-    private array $__data = [];
-    public function getSelectedTourId(){
-        return $this->__selectedTourId;
-    }
-    public function setSelectedTourId($_selectedTourId): void {
-        $this->__selectedTourId = $_selectedTourId;
-    }
-    public function getNgayKhoiHanh() {
-        return $this->__ngayKhoiHanh;
-    }
-    public function setNgayKhoiHanh($_ngayKhoiHanh): void {
-        $this->__ngayKhoiHanh = $_ngayKhoiHanh;
-    }
-    public function getSoLuongDangKy() {
-        return $this->__soLuongDangKy;
-    }
-    public function setSoLuongDangKy($_soLuongDangKy): void {
-        $this->__soLuongDangKy = $_soLuongDangKy;
-    }
-
-    public function getTenKhachHang() {
-        return $this->__tenKhachHang;
-    }
-    public function setTenKhachHang($_tenKhachHang): void {
-        $this->__tenKhachHang = $_tenKhachHang;
-    }
-    public function getDiaChiLienHe() {
-        return $this->__diaChiLienHe;
-    }
-    public function setDiaChiLienHe($_diaChiLienHe): void {
-        $this->__diaChiLienHe = $_diaChiLienHe;
-    }
-    public function getSoDienThoai() {
-        return $this->__soDienThoai;
-    }
-    public function setSoDienThoai($_soDienThoai): void {
-        $this->__soDienThoai = $_soDienThoai;
-    }
+    private $__soDienThoai;*/
+    public array $__data = [];
     function ShowTourName(): void {
         foreach ($this->__tenTour as $region => $tours) {
             echo '<optgroup label="' . $region . '">';
@@ -82,60 +46,46 @@ class TourDuLich {
             echo '</optgroup>';
         }
     }
-    function XuLy() {
-        if(isset($_POST['dangky'])) :
-            $tourBooking = new TourDuLich();
-            $tourBooking->setSelectedTourId(isset($_POST['tour']) ? htmlspecialchars( $_POST['tour'] ) : '');
-            $tourBooking->setNgayKhoiHanh(isset($_POST['ngaykhoihanh']) ? htmlspecialchars( $_POST['ngaykhoihanh'] ) : '');
-            $tourBooking->setSoLuongDangKy(isset($_POST['soluongdangky']) ? intval( $_POST['soluongdangky'] ) : 0);
-            $tourBooking->setTenKhachHang(isset($_POST['tenkhachhang']) ? htmlspecialchars( $_POST['tenkhachhang'] ) : '');
-            $tourBooking->setDiaChiLienHe(isset($_POST['diachi']) ? htmlspecialchars( $_POST['diachi'] ) : '');
-            $tourBooking->setSoDienThoai(isset($_POST['sodienthoai']) ? htmlspecialchars( $_POST['sodienthoai'] ) : '');
-        endif;
-        // Thêm dữ liệu vào mảng __data
-        $this->__data[] = $tourBooking;
-//        echo '<pre>';
-//        var_dump($this->__data);
-//        echo '</pre>';
-        /*$this->__data = [
-            'selectedTourId' => $this->getSelectedTourId(),
-            'ngayKhoiHanh' => $this->getNgayKhoiHanh(),
-            'soLuongDangKy' => $this->getSoLuongDangKy(),
-            'tenKhachHang' => $this->getTenKhachHang(),
-            'diaChiLienHe' => $this->getDiaChiLienHe(),
-            'soDienThoai' => $this->getSoDienThoai(),
-        ];*/
-    }
+
     /**
      * Lưu dữ liệu vào session
      */
     function SaveSession() {
         $_SESSION['tour'] = $this->__data; // Lưu mảng __data vào session với key 'tour'
-//        echo '<pre>';
-//        var_dump($_SESSION['tour']);
-//        echo '</pre>';
     }
 }
+
 $tours = new TourDuLich();
-$tours->XuLy();
-$tours->SaveSession();
-// Đảm bảo session 'tour' đã tồn tại trước khi truy cập nó
-//if (isset($_SESSION['tour'])) {
-//    $tourData = $_SESSION['tour'];
-//
-//    // Sử dụng vòng lặp foreach để hiển thị dữ liệu từ session
-//    foreach ($tourData as $key => $value) {
-//        echo "$key: $value<br>";
-//    }
-//}
+function XuLy(){
+    global $tours;
+    if (isset($_POST['dangky'])) :
+        $tours->__selectedTourId = trim(htmlspecialchars($_POST['tour']));
+        $ngayKhoiHanh = trim(htmlspecialchars($_POST['ngaykhoihanh']));
+        foreach ($tours->__tenTour as $region => $tours) :
+            if (array_key_exists($tours->__selectedTourId, $tours)) :
+                $tours->__selectedRegion = $region;
+                break;
+            endif;
+        endforeach;
+        // Thêm dữ liệu vào mảng __data
+        array_push($tours->__data,
+            trim(htmlspecialchars($_POST['tenkhachhang'])),
+            trim(htmlspecialchars($_POST['diachi'])),
+            trim(htmlspecialchars($_POST['sodienthoai'])),
+            $tours->__tenTour[$tours->__selectedRegion][$tours->__selectedTourId],
+            $tours->__giaTour[$tours->__selectedRegion][$tours->__selectedTourId],
+            trim(intval($_POST['soluongdangky']))
+        );
+        echo '<pre>';
+        var_dump($tours->__data);
+    endif;
+
+}
+XuLy();
 if (isset($_SESSION['tour'])) {
     $tourData = $_SESSION['tour'];
-
     foreach ($tourData as $booking) {
-        echo '<pre>';
-        var_dump($_SESSION['tour']);
-        echo '</pre>';
-        //echo "Tên khách hàng: " . $booking->getTenKhachHang() . "<br>";
+
     }
 }
 
@@ -154,7 +104,7 @@ if (isset($_SESSION['tour'])) {
 <section class="container">
     <div class="row justify-content-center">
         <div class="col-6">
-            <form action="" method="post" class="row row-cols-2 g-2">
+            <form action="" method="post" autocomplete="on" class="row row-cols-2 g-2">
                 <div class="col-12 text-center bg-primary-subtle text-white fw-bold fs-3">
                     Đăng ký tour du lịch
                 </div>
